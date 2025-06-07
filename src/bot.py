@@ -24,13 +24,34 @@ bot = commands.Bot(
 )
 
 # --- Comandos del Bot ---
+@bot.check
+async def no_dms(ctx):
+    if not ctx.guild:
+        await ctx.send("🚫 **Aquí no hay nada...**\n¡Los comandos solo funcionan en servidores! *(Como el Wi-Fi de la facu, a veces conecta, a veces no)* 📡")
+        return False
+    return True
+
 @bot.command(name="agregar_evento")
 async def agregar_evento(ctx, nombre: str, fecha: str, avisos: str):
-    """Agrega un evento al JSON (solo admins). Ejemplo: !agregar_evento "Parcial" 2024-07-20 3,1"""
-    if not ctx.author.guild_permissions.administrator:
-        await ctx.send("❌ **Error**: Solo los admins pueden agregar eventos.")
+    # Si es un DM, envía mensaje humorístico y bloquea
+    if not ctx.guild:
+        await ctx.send(
+            "🤖 **¡Ups! ¿Hablando solo con un bot?**\n"
+            "Los bots también tenemos vida social... ¡en servidores! 🎉\n\n"
+            "**¿Cómo agregar eventos?**\n"
+            "1. Ve al servidor de tu materia.\n"
+            "2. Usa `!agregar_evento \"Nombre\" AAAA-MM-DD días` (ej: `!agregar_evento \"Parcial\" 2024-12-20 3,1`).\n"
+            "3. ¡Solo admins pueden hacerlo! *(Como diría Skynet: 'No tienes permisos.')* 🚫\n\n"
+            "*PD: Si esto fuera un chatbot de película, ya habría iniciado el apocalipsis.* ☠️"
+        )
         return
 
+    # Verificar permisos solo en servidor
+    if not ctx.author.guild_permissions.administrator:
+        await ctx.send("❌ **Error 403**: ¡No tienes permisos de admin! *(Hazte amigo del/la prof primero)* 📚")
+        return
+
+    # Lógica para guardar el evento (solo si pasa las validaciones)
     try:
         eventos = cargar_eventos()
         nuevo_evento = {
@@ -38,17 +59,15 @@ async def agregar_evento(ctx, nombre: str, fecha: str, avisos: str):
             "fecha": fecha,
             "avisos": [int(d) for d in avisos.split(",")],
             "servidor_id": str(ctx.guild.id),
-            "canal_id": str(ctx.channel.id),
+            "canal_id": str(ctx.channel.id)
         }
         eventos.append(nuevo_evento)
-        
         # Acá se ebería actualizar el JSON remoto (ej: vía GitHub API o manualmente)
         with open("data/eventos.json", "w") as f:
             json.dump(eventos, f, indent=4)
-        
-        await ctx.send(f"✅ **Evento agregado**: '{nombre}' el {fecha} (avisos: {avisos} días antes).")
+        await ctx.send(f"✅ **Evento agregado**: '{nombre}' el {fecha}. ¡Gracias por evitar el caos temporal! ⏳")
     except Exception as e:
-        await ctx.send(f"❌ **Error**: {e}. Revisa el formato: !agregar_evento 'Nombre' YYYY-MM-DD dias (ej: 3,1)")
+        await ctx.send(f"⚠️ **Error crítico**: `{e}`. ¡Corran, es un bug! 🐞")
 
 @bot.command(name="eventos")
 async def listar_eventos(ctx):
