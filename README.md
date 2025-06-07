@@ -34,11 +34,9 @@ Roadmap: Extensible a otras materias con mínima configuración.
 ### 🚀 Configuración Inicial
 #### 1. Requisitos
 
-    Token de bot de Discord (Guía).
-
-    Python 3.10+ y pip.
-
-    Repositorio GitHub para el JSON de eventos (opcional).
+- Token de bot de Discord ([Guía](https://discordpy.readthedocs.io/en/stable/discord.html)).
+- Python 3.10+ y pip.
+- Repositorio GitHub para el JSON de eventos (opcional).
 
 #### 2. Instalación
 
@@ -91,19 +89,40 @@ Crear .env en la raíz:
 📜 Licencia
 
 MIT License. Libre para uso y modificación.
-📬 Contacto
 
-¿Preguntas o contribuciones? Abrí un issue o contactame a @dperalta86 en Discord.
+### 📬 Contacto
 
-✨ "Porque recordar fechas debería ser tan fácil como copiar código de Stack Overflow."
-Notas Adicionales
+¡Siéntete libre de contactarme para colaborar, reportar bugs o simplemente charlar sobre tecnología!
+#### 🌐 Redes y Enlaces
+| Plataforma | Link |
+|------------|------|
+| GitHub | ![Github contact](https://img.shields.io/badge/-@dperalta86-181717?style=flat&logo=github&logoColor=white) |
+| Discord | ![Discord contact](https://img.shields.io/badge/-@dperalta86-5865F2?style=flat&logo=discord&logoColor=white) |
+| X (Twitter) | ![Tweeter contact](https://img.shields.io/badge/-@dperalta_ok-1DA1F2?style=flat&logo=x&logoColor=white) |
+| LinkeIn | ![Linked In contact](https://img.shields.io/badge/-dperalta86-0077B5?style=flat&logo=linkedin&logoColor=white) |
 
-    Personalización: Los mensajes se ajustan al tono informal/geek (ver mensajes.py).
+¿Por qué contactarme?
 
-    Escalabilidad: Diseñado para integrarse con APIs externas (Google Calendar, Notion).
+    🤖 Ideas para mejorar proyectos.
 
-🔧 ¿Problemas?
+    🐞 Reportar errores o solicitar features.
 
-    Verifica los permisos del bot en Discord.
+    ☕ Tomar un café virtual (¡siempre disponible!).
 
-    Asegúrate de que el JSON remoto sea accesible.
+
+**¿Preguntas o contribuciones sobre este proyecto? Abrí un issue o contactame a @dperalta86 en Discord.**
+
+### Notas Adicionales
+
+Personalización: Los mensajes se ajustan al tono informal/geek (ver mensajes.py).
+Escalabilidad: Diseñado para integrarse con APIs externas (Google Calendar, Notion).
+
+#### 🔧 ¿Problemas?
+
+- Verifica que las dependencias estén instaladas
+- Verifica los permisos del bot en Discord.
+- Asegúrate de que el JSON remoto sea accesible.
+
+----
+
+✨ _"Porque recordar fechas debería ser tan fácil como copiar código de Stack Overflow."_
