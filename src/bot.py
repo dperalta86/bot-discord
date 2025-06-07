@@ -1,5 +1,7 @@
 import discord
 from discord.ext import commands, tasks
+from flask import Flask
+from threading import Thread
 import json
 import requests
 from datetime import datetime
@@ -12,6 +14,30 @@ from utils import cargar_eventos, formatear_fecha
 load_dotenv()  # Carga variables de entorno desde .env
 TOKEN = os.getenv("DISCORD_TOKEN")
 JSON_URL = os.getenv("JSON_URL") # URL del JSON remoto
+
+# Configura Flask
+app = Flask(__name__)
+
+@app.route('/')
+def home():
+    return "¡Bot de Discord en línea! Usa !ayuda en tu servidor."
+
+@app.route('/ping')
+def ping():
+    return "pong", 200
+
+def run_flask():
+    app.run(host='0.0.0.0', port=8080)
+
+# Inicia Flask en segundo plano
+Thread(target=run_flask).start()
+
+# Configura el bot de Discord
+bot = commands.Bot(command_prefix="!")
+
+@bot.event
+async def on_ready():
+    print(f"Bot conectado como {bot.user.name}")
 
 # Intents (necesarios para Discord.py v2.x+)
 intents = discord.Intents.default()
