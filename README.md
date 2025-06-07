@@ -90,6 +90,21 @@ Crear .env en la raíz:
 
 MIT License. Libre para uso y modificación.
 
+### Notas Adicionales
+
+Personalización: Los mensajes se ajustan al tono informal/geek (ver mensajes.py).
+Escalabilidad: Diseñado para integrarse con APIs externas (Google Calendar, Notion).
+
+#### 🔧 ¿Problemas?
+
+- Verifica que las dependencias estén instaladas
+- Verifica los permisos del bot en Discord.
+- Asegúrate de que el JSON remoto sea accesible.
+
+----
+
+✨ _"Porque recordar fechas debería ser tan fácil como copiar código de Stack Overflow."_
+
 ### 📬 Contacto
 
 ¡Siéntete libre de contactarme para colaborar, reportar bugs o simplemente charlar sobre tecnología!
@@ -111,18 +126,3 @@ MIT License. Libre para uso y modificación.
 
 
 **¿Preguntas o contribuciones sobre este proyecto? Abrí un issue o contactame a @dperalta86 en Discord.**
-
-### Notas Adicionales
-
-Personalización: Los mensajes se ajustan al tono informal/geek (ver mensajes.py).
-Escalabilidad: Diseñado para integrarse con APIs externas (Google Calendar, Notion).
-
-#### 🔧 ¿Problemas?
-
-- Verifica que las dependencias estén instaladas
-- Verifica los permisos del bot en Discord.
-- Asegúrate de que el JSON remoto sea accesible.
-
-----
-
-✨ _"Porque recordar fechas debería ser tan fácil como copiar código de Stack Overflow."_

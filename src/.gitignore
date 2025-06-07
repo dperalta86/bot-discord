@@ -1,8 +1,8 @@
 # Python
 __pycache__/
 *.py[cod]
-.env
 venv/
 
 # Datos sensibles
+*.env
 data/eventos.json  # Si se usa solo JSON remoto
