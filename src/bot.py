@@ -6,11 +6,12 @@ from datetime import datetime
 import os
 from dotenv import load_dotenv
 from src.mensajes import mensaje_tp, mensaje_examen  # Importar las funciones
+from src.utils import cargar_eventos, formatear_fecha
 
 # --- Configuración inicial ---
 load_dotenv()  # Carga variables de entorno desde .env
-TOKEN = os.getenv("DISCORD_TOKEN")  # Token seguro
-JSON_URL = "https://raw.githubusercontent.com/tu_usuario/pdepbot-data/main/eventos.json"  # URL del JSON remoto
+TOKEN = os.getenv("DISCORD_TOKEN")
+JSON_URL = os.getenv("JSON_URL") # URL del JSON remoto
 
 # Intents (necesarios para Discord.py v2.x+)
 intents = discord.Intents.default()
@@ -21,25 +22,6 @@ bot = commands.Bot(
     intents=intents,
     help_command=None,  # Desactiva el comando de ayuda por defecto
 )
-
-# --- Funciones auxiliares ---
-def cargar_eventos():
-    """Carga eventos desde el JSON remoto o local (backup)."""
-    try:
-        response = requests.get(JSON_URL)
-        eventos = response.json()
-        # Guardar backup local
-        with open("data/eventos.json", "w") as f:
-            json.dump(eventos, f, indent=4)
-        return eventos
-    except Exception as e:
-        print(f"Error al cargar JSON remoto: {e}. Usando backup local.")
-        with open("data/eventos.json") as f:
-            return json.load(f)
-
-def formatear_fecha(fecha_str):
-    """Convierte 'YYYY-MM-DD' a un objeto datetime.date."""
-    return datetime.strptime(fecha_str, "%Y-%m-%d").date()
 
 # --- Comandos del Bot ---
 @bot.command(name="agregar_evento")
@@ -100,7 +82,7 @@ async def ayuda(ctx):
 # --- Tarea automática de recordatorios ---
 @tasks.loop(hours=24)
 async def enviar_recordatorios():
-    eventos = cargar_eventos()
+    eventos = cargar_eventos(JSON_URL)
     hoy = datetime.now().date()
     
     for evento in eventos:

@@ -6,4 +6,4 @@ venv/
 
 # Datos sensibles
 *.env
-data/eventos.json  # Si se usa solo JSON remoto
+src/data/eventos.json  # Si se usa solo JSON remoto

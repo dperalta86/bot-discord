@@ -1,0 +1,10 @@
+[
+  {
+    "nombre": "Parcial de Haskell",
+    "fecha": "2024-07-20",
+    "avisos": [3, 1],
+    "servidor_id": "123456789",
+    "canal_id": "987654321",
+    "role_a_avisar": "Estudiantes"
+  }
+]
