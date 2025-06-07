@@ -97,19 +97,17 @@ async def agregar_evento(ctx, nombre: str, fecha: str, avisos: str):
     except Exception as e:
         await ctx.send(f"⚠️ **Error crítico**: `{e}`. ¡Corran, es un bug! 🐞")
 
-@bot.command(name="eventos")
-async def listar_eventos(ctx):
-    """Lista todos los eventos programados."""
-    eventos = cargar_eventos()
-    eventos_filtrados = [e for e in eventos if e["servidor_id"] == str(ctx.guild.id)]
-    
-    if not eventos_filtrados:
+@bot.command()
+async def eventos(ctx):
+    """Muestra eventos del servidor actual."""
+    eventos = cargar_eventos(JSON_URL, str(ctx.guild.id))  # Filtra por servidor
+    if not eventos:
         await ctx.send("📭 No hay eventos programados. ¡Agrega uno con `!agregar_evento`!")
         return
     
     mensaje = "📅 **Eventos activos:**\n" + "\n".join(
         f"- **{e['nombre']}**: {e['fecha']} (avisos: {', '.join(map(str, e['avisos']))} días antes)"
-        for e in eventos_filtrados
+        for e in eventos
     )
     await ctx.send(mensaje)
 

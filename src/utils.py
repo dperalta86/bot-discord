@@ -4,7 +4,7 @@ import requests
 from pathlib import Path
 from typing import List, Dict
 
-def cargar_eventos(json_url: str = None, local_path: str = "data/eventos.json") -> List[Dict]:
+def cargar_eventos(json_url: str = None, local_path: str = "data/eventos.json", servidor_id: str = None) -> List[Dict]:
     """
     Carga eventos desde una URL remota (GitHub) o desde un archivo local como fallback.
     
@@ -33,6 +33,14 @@ def cargar_eventos(json_url: str = None, local_path: str = "data/eventos.json") 
                 json.dump(eventos, f, indent=4)
                 
             print("✅ Eventos cargados desde el JSON remoto.")
+            if servidor_id:
+                eventos_filtrados = [
+                    e for e in eventos 
+                    if "servidor_id" not in e or e.get("servidor_id") == servidor_id
+                ]
+                print(f"✅ Eventos filtrados para servidor {servidor_id}: {len(eventos_filtrados)}")
+                return eventos_filtrados
+            
             return eventos
         except Exception as e:
             print(f"⚠️ Error al cargar JSON remoto: {e}. Usando backup local...")
