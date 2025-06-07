@@ -5,8 +5,8 @@ import requests
 from datetime import datetime
 import os
 from dotenv import load_dotenv
-from src.mensajes import mensaje_tp, mensaje_examen  # Importar las funciones
-from src.utils import cargar_eventos, formatear_fecha
+from mensajes import mensaje_tp, mensaje_examen  # Importar las funciones
+from utils import cargar_eventos, formatear_fecha
 
 # --- Configuración inicial ---
 load_dotenv()  # Carga variables de entorno desde .env
