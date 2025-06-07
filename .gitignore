@@ -5,4 +5,5 @@ __pycache__/
 venv/
 
 # Datos sensibles
+*.env
 data/eventos.json  # Si se usa solo JSON remoto
