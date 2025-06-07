@@ -33,7 +33,9 @@ def run_flask():
 Thread(target=run_flask).start()
 
 # Configura el bot de Discord
-bot = commands.Bot(command_prefix="!")
+intents = discord.Intents.default()
+intents.message_content = True  # -> Para leer mensajes
+bot = commands.Bot(command_prefix="!", intents=intents)
 
 @bot.event
 async def on_ready():
