@@ -44,10 +44,6 @@ bot = commands.Bot(
 )
 
 @bot.event
-async def on_ready():
-    print(f"Bot conectado como {bot.user.name}")
-
-@bot.event
 async def on_guild_join(guild):
     """Envía un mensaje al unirse a un nuevo servidor."""
     # Busca el primer canal de texto donde el bot pueda escribir
@@ -70,7 +66,16 @@ async def on_guild_join(guild):
 @bot.check
 async def no_dms(ctx):
     if not ctx.guild:
-        await ctx.send("🚫 **Aquí no hay nada...**\n¡Los comandos solo funcionan en servidores! *(Como el Wi-Fi de la facu, a veces conecta, a veces no)* 📡")
+        await ctx.send(
+            "🤖 **¡Ups! ¿Hablando solo con un bot?**\n"
+            "Los bots también tenemos vida social... ¡en servidores! 🎉\n\n"
+            "¡Los comandos solo funcionan en servidores! *(Como el Wi-Fi de la facu, a veces conecta, a veces no)* 📡"
+            "**¿Cómo agregar eventos?**\n"
+            "1. Entrá al servidor de la materia.\n"
+            "2. Usa `!agregar_evento \"Nombre\" AAAA-MM-DD días` (ej: `!agregar_evento \"Parcial\" 2024-12-20 3,1`).\n"
+            "3. ¡Solo admins pueden hacerlo! *(Como diría Skynet: 'No tienes permisos.')* 🚫\n\n"
+            "*PD: Si esto fuera un chatbot de película, ya habría iniciado el apocalipsis.* ☠️"
+        )
         return False
     return True
 
@@ -78,15 +83,7 @@ async def no_dms(ctx):
 async def agregar_evento(ctx, nombre: str, fecha: str, avisos: str):
     # Si es un DM, envía mensaje humorístico y bloquea
     if not ctx.guild:
-        await ctx.send(
-            "🤖 **¡Ups! ¿Hablando solo con un bot?**\n"
-            "Los bots también tenemos vida social... ¡en servidores! 🎉\n\n"
-            "**¿Cómo agregar eventos?**\n"
-            "1. Ve al servidor de tu materia.\n"
-            "2. Usa `!agregar_evento \"Nombre\" AAAA-MM-DD días` (ej: `!agregar_evento \"Parcial\" 2024-12-20 3,1`).\n"
-            "3. ¡Solo admins pueden hacerlo! *(Como diría Skynet: 'No tienes permisos.')* 🚫\n\n"
-            "*PD: Si esto fuera un chatbot de película, ya habría iniciado el apocalipsis.* ☠️"
-        )
+        await ctx.send("🚫 **Aquí no hay nada...**\n¡Los comandos solo funcionan en servidores! *(Como el Wi-Fi de la facu, a veces conecta, a veces no)* 📡")
         return
 
     # Verificar permisos solo en servidor
@@ -112,7 +109,7 @@ async def agregar_evento(ctx, nombre: str, fecha: str, avisos: str):
     except Exception as e:
         await ctx.send(f"⚠️ **Error crítico**: `{e}`. ¡Corran, es un bug! 🐞")
 
-@bot.command()
+@bot.command(name="eventos")
 async def eventos(ctx):
     """Muestra eventos del servidor actual."""
     try:
