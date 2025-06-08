@@ -77,7 +77,7 @@ async def agregar_evento(ctx, nombre: str, fecha: str, avisos: str):
 
     # Lógica para guardar el evento (solo si pasa las validaciones)
     try:
-        eventos = cargar_eventos(json_url=JSON_URL, local_path=LOCAL_PATH, servidor_id=str(ctx.guild.id))
+        eventos = cargar_eventos(json_url=JSON_URL, local_path=LOCAL_PATH)
         nuevo_evento = {
             "nombre": nombre,
             "fecha": fecha,
@@ -119,6 +119,18 @@ async def ayuda(ctx):
 *"Más confiable que un `try-catch` vacío."* 🛠️
     """
     await ctx.send(ayuda_msg)
+
+@bot.command()
+async def debug(ctx):
+    """Muestra información de configuración."""
+    info = f"""
+    🔍 **Debug Info**:
+    - JSON_URL: {JSON_URL}
+    - Servidor ID: {ctx.guild.id}
+    - Archivo local: {LOCAL_PATH}
+    - Token: {'✅' if TOKEN else '❌'}
+    """
+    await ctx.send(info)
 
 # --- Tarea automática de recordatorios ---
 @tasks.loop(hours=24)
