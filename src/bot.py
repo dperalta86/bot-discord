@@ -14,6 +14,7 @@ from utils import cargar_eventos, formatear_fecha
 load_dotenv()  # Carga variables de entorno desde .env
 TOKEN = os.getenv("DISCORD_TOKEN")
 JSON_URL = os.getenv("JSON_URL") # URL del JSON remoto
+LOCAL_PATH="data/eventos.json"
 
 # Configura Flask
 app = Flask(__name__)
@@ -76,7 +77,7 @@ async def agregar_evento(ctx, nombre: str, fecha: str, avisos: str):
 
     # Lógica para guardar el evento (solo si pasa las validaciones)
     try:
-        eventos = cargar_eventos(JSON_URL)
+        eventos = cargar_eventos(json_url=JSON_URL, local_path=LOCAL_PATH, servidor_id=str(ctx.guild.id))
         nuevo_evento = {
             "nombre": nombre,
             "fecha": fecha,
@@ -95,7 +96,7 @@ async def agregar_evento(ctx, nombre: str, fecha: str, avisos: str):
 @bot.command()
 async def eventos(ctx):
     """Muestra eventos del servidor actual."""
-    eventos = cargar_eventos(JSON_URL, str(ctx.guild.id))  # Filtra por servidor
+    eventos = cargar_eventos(json_url=JSON_URL, local_path=LOCAL_PATH, servidor_id=str(ctx.guild.id)) # Filtra por servidor
     if not eventos:
         await ctx.send("📭 No hay eventos programados. ¡Agrega uno con `!agregar_evento`!")
         return
@@ -122,7 +123,7 @@ async def ayuda(ctx):
 # --- Tarea automática de recordatorios ---
 @tasks.loop(hours=24)
 async def enviar_recordatorios():
-    eventos = cargar_eventos(JSON_URL)
+    eventos = cargar_eventos(json_url=JSON_URL, local_path=LOCAL_PATH, servidor_id=str(ctx.guild.id))
     hoy = datetime.now().date()
     
     for evento in eventos:
