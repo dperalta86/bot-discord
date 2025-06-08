@@ -47,6 +47,25 @@ bot = commands.Bot(
 async def on_ready():
     print(f"Bot conectado como {bot.user.name}")
 
+@bot.event
+async def on_guild_join(guild):
+    """Envía un mensaje al unirse a un nuevo servidor."""
+    # Busca el primer canal de texto donde el bot pueda escribir
+    canal = next((c for c in guild.text_channels if c.permissions_for(guild.me).send_messages), None)
+    
+    if canal:
+        mensaje = (
+            "🎉 **¡Hola comunidad!** 🎉\n"
+            f"Soy {bot.user.name}, el bot no oficial de recordatorios de la facultad.\n\n"
+            "📌 **Mis funciones principales**:\n"
+            "Me programaron para enviar recordatorios de deadlines o fechas importantes.\n"
+            "Segurmante esté escribiendo en estos días, hay muchos TP's por entregar tosavia!\n"
+            "🛠️ **Atajo para los curiosos**:\n"
+            "Usa `!eventos` para ver todos los eventos registrados.\n"
+            "*«Programado para evitar tu procrastinación»* 💻"
+        )
+        await canal.send(mensaje)
+
 # --- Comandos del Bot ---
 @bot.check
 async def no_dms(ctx):
