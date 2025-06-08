@@ -93,19 +93,28 @@ async def agregar_evento(ctx, nombre: str, fecha: str, avisos: str):
     except Exception as e:
         await ctx.send(f"⚠️ **Error crítico**: `{e}`. ¡Corran, es un bug! 🐞")
 
-@bot.command("eventos")
+@bot.command()
 async def eventos(ctx):
     """Muestra eventos del servidor actual."""
-    eventos = cargar_eventos(json_url=JSON_URL, local_path=LOCAL_PATH, servidor_id=str(ctx.guild.id)) # Filtra por servidor
-    if not eventos:
-        await ctx.send("📭 No hay eventos programados. ¡Agrega uno con `!agregar_evento`!")
-        return
-    
-    mensaje = "📅 **Eventos activos:**\n" + "\n".join(
-        f"- **{e['nombre']}**: {e['fecha']} (avisos: {', '.join(map(str, e['avisos']))} días antes)"
-        for e in eventos
-    )
-    await ctx.send(mensaje)
+    try:
+        eventos = cargar_eventos(json_url=JSON_URL, local_path=LOCAL_PATH, servidor_id=str(ctx.guild.id))
+        
+        if not eventos:
+            await ctx.send("📭 No hay eventos programados. ¡Agrega uno con `!agregar_evento`!")
+            return
+        
+        mensaje = "📅 **Eventos activos:**\n"
+        for e in eventos:
+            try:
+                if 'fecha' not in e or 'avisos' not in e:
+                    continue
+                mensaje += f"- **{e['nombre']}**: {e['fecha']} (avisos: {', '.join(map(str, e['avisos']))} días antes)\n"
+            except KeyError:
+                continue
+        
+        await ctx.send(mensaje)
+    except Exception as e:
+        await ctx.send(f"❌ Error al cargar eventos: {str(e)}")
 
 @bot.command(name="ayuda")
 async def ayuda(ctx):
@@ -134,27 +143,34 @@ async def debug(ctx):
 
 # --- Tarea automática de recordatorios ---
 @tasks.loop(hours=24)
-async def enviar_recordatorios(ctx):
-    eventos = cargar_eventos(json_url=JSON_URL, local_path=LOCAL_PATH, servidor_id=str(ctx.guild.id))
-    hoy = datetime.now().date()
-    
-    for evento in eventos:
-        try:
-            fecha_evento = formatear_fecha(evento["fecha"])
-            dias_restantes = (fecha_evento - hoy).days
-            
-            if dias_restantes in evento["avisos"]:
-                canal = bot.get_channel(int(evento["canal_id"]))
+async def enviar_recordatorios():
+    """Envía recordatorios de eventos programados."""
+    try:
+        eventos = cargar_eventos(json_url=JSON_URL, local_path="data/eventos.json")
+        hoy = datetime.now().date()
+        
+        for evento in eventos:
+            try:
+                # Verifica si el evento tiene los campos necesarios
+                if not all(key in evento for key in ['fecha', 'avisos', 'canal_id', 'nombre']):
+                    print(f"⚠️ Evento incompleto: {evento}")
+                    continue
                 
-                # Seleccionar mensaje según el tipo de evento
-                if "parcial" in evento["nombre"].lower() or "examen" in evento["nombre"].lower():
-                    mensaje = mensaje_examen(evento["fecha"])
-                else:
-                    mensaje = mensaje_tp(evento["fecha"])
+                fecha_evento = formatear_fecha(evento["fecha"])
+                dias_restantes = (fecha_evento - hoy).days
                 
-                await canal.send(mensaje)
-        except Exception as e:
-            print(f"Error al procesar evento {evento}: {e}")
+                if dias_restantes in evento["avisos"]:
+                    canal = bot.get_channel(int(evento["canal_id"]))
+                    if canal:
+                        if "parcial" in evento["nombre"].lower() or "examen" in evento["nombre"].lower():
+                            mensaje = mensaje_examen(evento["fecha"])
+                        else:
+                            mensaje = mensaje_tp(evento["fecha"])
+                        await canal.send(mensaje)
+            except Exception as e:
+                print(f"Error al procesar evento {evento}: {e}")
+    except Exception as e:
+        print(f"Error crítico en enviar_recordatorios: {e}")
 
 # --- Eventos del Bot ---
 @bot.event
