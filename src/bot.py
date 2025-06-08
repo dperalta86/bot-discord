@@ -34,15 +34,6 @@ Thread(target=run_flask).start()
 
 # Configura el bot de Discord
 intents = discord.Intents.default()
-intents.message_content = True  # -> Para leer mensajes
-bot = commands.Bot(command_prefix="!", intents=intents)
-
-@bot.event
-async def on_ready():
-    print(f"Bot conectado como {bot.user.name}")
-
-# Intents (necesarios para Discord.py v2.x+)
-intents = discord.Intents.default()
 intents.message_content = True
 
 bot = commands.Bot(
@@ -50,6 +41,10 @@ bot = commands.Bot(
     intents=intents,
     help_command=None,  # Desactiva el comando de ayuda por defecto
 )
+
+@bot.event
+async def on_ready():
+    print(f"Bot conectado como {bot.user.name}")
 
 # --- Comandos del Bot ---
 @bot.check
@@ -81,7 +76,7 @@ async def agregar_evento(ctx, nombre: str, fecha: str, avisos: str):
 
     # Lógica para guardar el evento (solo si pasa las validaciones)
     try:
-        eventos = cargar_eventos()
+        eventos = cargar_eventos(JSON_URL)
         nuevo_evento = {
             "nombre": nombre,
             "fecha": fecha,

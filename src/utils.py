@@ -11,6 +11,7 @@ def cargar_eventos(json_url: str = None, local_path: str = "data/eventos.json", 
     Args:
         json_url: URL del JSON remoto (opcional).
         local_path: Ruta al archivo local de backup.
+        servidor°id: Para filtrar eventos
         
     Returns:
         List[Dict]: Lista de eventos cargados.
