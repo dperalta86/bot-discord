@@ -155,6 +155,7 @@ async def debug(ctx):
     🔍 **Debug Info**:
     - JSON_URL: {JSON_URL}
     - Servidor ID: {ctx.guild.id}
+    - Canal ID : {ctx.channel.id}
     - Archivo local: {LOCAL_PATH}
     - Token: {'✅' if TOKEN else '❌'}
     """
