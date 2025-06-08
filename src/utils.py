@@ -42,7 +42,7 @@ def cargar_eventos(json_url: str = None, local_path: str = "data/eventos.json", 
                 print(f"✅ Eventos filtrados para servidor {servidor_id}: {len(eventos_filtrados)}")
                 return eventos_filtrados
             
-            return eventos
+            # return eventos
         except Exception as e:
             print(f"⚠️ Error al cargar JSON remoto: {e}. Usando backup local...")
     

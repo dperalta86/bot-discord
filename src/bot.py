@@ -93,7 +93,7 @@ async def agregar_evento(ctx, nombre: str, fecha: str, avisos: str):
     except Exception as e:
         await ctx.send(f"⚠️ **Error crítico**: `{e}`. ¡Corran, es un bug! 🐞")
 
-@bot.command()
+@bot.command("eventos")
 async def eventos(ctx):
     """Muestra eventos del servidor actual."""
     eventos = cargar_eventos(json_url=JSON_URL, local_path=LOCAL_PATH, servidor_id=str(ctx.guild.id)) # Filtra por servidor
@@ -122,7 +122,7 @@ async def ayuda(ctx):
 
 # --- Tarea automática de recordatorios ---
 @tasks.loop(hours=24)
-async def enviar_recordatorios():
+async def enviar_recordatorios(ctx):
     eventos = cargar_eventos(json_url=JSON_URL, local_path=LOCAL_PATH, servidor_id=str(ctx.guild.id))
     hoy = datetime.now().date()
     
