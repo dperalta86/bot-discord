@@ -6,6 +6,8 @@ import json
 import requests
 from datetime import datetime
 import os
+import logging
+import logging.handlers
 from dotenv import load_dotenv
 from mensajes import mensaje_tp, mensaje_examen  # Importar las funciones
 from utils import cargar_eventos, formatear_fecha
@@ -16,7 +18,7 @@ TOKEN = os.getenv("DISCORD_TOKEN")
 JSON_URL = os.getenv("JSON_URL") # URL del JSON remoto
 LOCAL_PATH="data/eventos.json"
 
-# Configura Flask
+# Configura Flask - Servidor para abrir puerto y evitar errores en Render
 app = Flask(__name__)
 
 @app.route('/')
@@ -43,6 +45,26 @@ bot = commands.Bot(
     help_command=None,  # Desactiva el comando de ayuda por defecto
 )
 
+# logs - Utilizo configuracion propuesta pot discord
+
+# for this example, we're going to set up a rotating file logger.
+# for more info on setting up logging,
+# see https://discordpy.readthedocs.io/en/latest/logging.html and https://docs.python.org/3/howto/logging.html
+
+logger = logging.getLogger('discord')
+logger.setLevel(logging.INFO)
+
+handler = logging.handlers.RotatingFileHandler(
+    filename='discord.log',
+    encoding='utf-8',
+    maxBytes=32 * 1024 * 1024,  # 32 MiB
+    backupCount=5,  # Rotate through 5 files
+)
+dt_fmt = '%Y-%m-%d %H:%M:%S'
+formatter = logging.Formatter('[{asctime}] [{levelname:<8}] {name}: {message}', dt_fmt, style='{')
+handler.setFormatter(formatter)
+logger.addHandler(handler)
+
 @bot.event
 async def on_guild_join(guild):
     """Envía un mensaje al unirse a un nuevo servidor."""
@@ -55,7 +77,7 @@ async def on_guild_join(guild):
             f"Soy {bot.user.name}, el bot no oficial de recordatorios de la facultad.\n\n"
             "📌 **Mis funciones principales**:\n"
             "Me programaron para enviar recordatorios de deadlines o fechas importantes.\n"
-            "Segurmante esté escribiendo en estos días, hay muchos TP's por entregar tosavia!\n"
+            "Segurmante esté escribiendo en estos días, hay muchos TP's por entregar todavía!\n"
             "🛠️ **Atajo para los curiosos**:\n"
             "Usa `!eventos` para ver todos los eventos registrados.\n"
             "*«Programado para evitar tu procrastinación»* 💻"
@@ -102,7 +124,7 @@ async def agregar_evento(ctx, nombre: str, fecha: str, avisos: str):
             "canal_id": str(ctx.channel.id)
         }
         eventos.append(nuevo_evento)
-        # Acá se ebería actualizar el JSON remoto (ej: vía GitHub API o manualmente)
+        # Acá se ebería actualizar el JSON remoto (ej: vía GitHub API o manualmente). Todavia no implementado
         with open("data/eventos.json", "w") as f:
             json.dump(eventos, f, indent=4)
         await ctx.send(f"✅ **Evento agregado**: '{nombre}' el {fecha}. ¡Gracias por evitar el caos temporal! ⏳")
@@ -145,6 +167,7 @@ async def ayuda(ctx):
     """
     await ctx.send(ayuda_msg)
 
+# Eliminar en producción...
 @bot.command()
 async def debug(ctx):
     """Muestra información de configuración."""
@@ -159,7 +182,7 @@ async def debug(ctx):
     await ctx.send(info)
 
 # --- Tarea automática de recordatorios ---
-@tasks.loop(hours=24)
+@tasks.loop(hours=1)
 async def enviar_recordatorios():
     """Envía recordatorios de eventos programados."""
     try:
@@ -170,7 +193,7 @@ async def enviar_recordatorios():
             try:
                 # Verifica si el evento tiene los campos necesarios
                 if not all(key in evento for key in ['fecha', 'avisos', 'canal_id', 'nombre']):
-                    print(f"⚠️ Evento incompleto: {evento}")
+                    logger(f"⚠️ Evento incompleto: {evento}")
                     continue
                 
                 fecha_evento = formatear_fecha(evento["fecha"])
@@ -179,20 +202,20 @@ async def enviar_recordatorios():
                 if dias_restantes in evento["avisos"]:
                     canal = bot.get_channel(int(evento["canal_id"]))
                     if canal:
-                        if "parcial" in evento["nombre"].lower() or "examen" in evento["nombre"].lower():
+                        if "parcial" in evento["nombre"].lower() or "examen" in evento["nombre"].lower() or "recuperatorio" in evento["nombre"].lower():
                             mensaje = mensaje_examen(evento["fecha"])
                         else:
                             mensaje = mensaje_tp(evento["fecha"])
                         await canal.send(mensaje)
             except Exception as e:
-                print(f"Error al procesar evento {evento}: {e}")
+                logger(f"Error al procesar evento {evento}: {e}")
     except Exception as e:
         print(f"Error crítico en enviar_recordatorios: {e}")
 
 # --- Eventos del Bot ---
 @bot.event
 async def on_ready():
-    print(f"✅ Bot conectado como {bot.user.name}")
+    logger(f"✅ Bot conectado como {bot.user.name}")
     enviar_recordatorios.start()
 
 @bot.event
