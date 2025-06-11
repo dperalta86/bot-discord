@@ -66,6 +66,19 @@ formatter = logging.Formatter('[{asctime}] [{levelname:<8}] {name}: {message}', 
 handler.setFormatter(formatter)
 logger.addHandler(handler)
 
+# --- Eventos del Bot ---
+@bot.event
+async def on_ready():
+    logger.info(f"✅ Bot conectado como {bot.user.name}")
+    enviar_recordatorios.start()
+
+@bot.event
+async def on_command_error(ctx, error):
+    if isinstance(error, commands.CommandNotFound):
+        await ctx.send("❌ Comando no encontrado. Usa `!ayuda` para ver la lista.")
+    else:
+        await ctx.send(f"⚠️ **Error**: {error}")
+        
 @bot.event
 async def on_guild_join(guild):
     """Envía un mensaje al unirse a un nuevo servidor."""
@@ -230,7 +243,7 @@ async def debug(ctx):
     await ctx.send(info)
 
 # --- Tarea automática de recordatorios ---
-@tasks.loop(hours=1)
+@tasks.loop(minutes=10.0)
 async def enviar_recordatorios():
     """Envía recordatorios de eventos programados."""
     try:
@@ -241,7 +254,7 @@ async def enviar_recordatorios():
             try:
                 # Verifica si el evento tiene los campos necesarios
                 if not all(key in evento for key in ['fecha', 'avisos', 'canal_id', 'nombre']):
-                    logger(f"⚠️ Evento incompleto: {evento}")
+                    logger.warning(f"⚠️ Evento incompleto: {evento}")
                     continue
                 
                 fecha_evento = formatear_fecha(evento["fecha"])
@@ -256,22 +269,9 @@ async def enviar_recordatorios():
                             mensaje = mensaje_tp(evento["fecha"])
                         await canal.send(mensaje)
             except Exception as e:
-                logger(f"Error al procesar evento {evento}: {e}")
+                logger.warning(f"Error al procesar evento {evento}: {e}")
     except Exception as e:
         print(f"Error crítico en enviar_recordatorios: {e}")
-
-# --- Eventos del Bot ---
-@bot.event
-async def on_ready():
-    logger.info(f"✅ Bot conectado como {bot.user.name}")
-    enviar_recordatorios.start()
-
-@bot.event
-async def on_command_error(ctx, error):
-    if isinstance(error, commands.CommandNotFound):
-        await ctx.send("❌ Comando no encontrado. Usa `!ayuda` para ver la lista.")
-    else:
-        await ctx.send(f"⚠️ **Error**: {error}")
 
 # --- Ejecución ---
 if __name__ == "__main__":
