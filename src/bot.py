@@ -3,7 +3,6 @@ from discord.ext import commands, tasks
 from flask import Flask
 from threading import Thread
 import json
-import requests
 from datetime import datetime
 import os
 import logging
@@ -11,7 +10,6 @@ import logging.handlers
 from dotenv import load_dotenv
 from mensajes import mensaje_tp, mensaje_examen  # Importar las funciones
 from utils import cargar_eventos, formatear_fecha
-from eventos import agregar_evento, eliminar_evento, editar_evento, obtener_proximos_eventos
 
 # --- Configuración inicial ---
 load_dotenv()  # Carga variables de entorno desde .env
@@ -38,7 +36,7 @@ Thread(target=run_flask).start()
 
 # Configura el bot de Discord
 intents = discord.Intents.default()
-intents.message_content = True
+intents.messages = True
 
 bot = commands.Bot(
     command_prefix="!",
@@ -66,6 +64,7 @@ formatter = logging.Formatter('[{asctime}] [{levelname:<8}] {name}: {message}', 
 handler.setFormatter(formatter)
 logger.addHandler(handler)
 
+
 # --- Eventos del Bot ---
 @bot.event
 async def on_ready():
@@ -78,7 +77,7 @@ async def on_command_error(ctx, error):
         await ctx.send("❌ Comando no encontrado. Usa `!ayuda` para ver la lista.")
     else:
         await ctx.send(f"⚠️ **Error**: {error}")
-        
+
 @bot.event
 async def on_guild_join(guild):
     """Envía un mensaje al unirse a un nuevo servidor."""
@@ -179,17 +178,6 @@ async def agregar(ctx, nombre: str, fecha: str):
     except ValueError:
         await ctx.send("❌ Formato de fecha inválido. Usa YYYY-MM-DD.")
 
-
-@bot.command()
-async def borrar_evento(ctx, *, nombre: str):
-    """Elimina un evento por nombre."""
-    exito = eliminar_evento(nombre, str(ctx.guild.id))
-    if exito:
-        await ctx.send(f"🗑️ Evento '{nombre}' eliminado.")
-    else:
-        await ctx.send(f"❌ No se encontró un evento llamado '{nombre}'.")
-
-
 @bot.command()
 async def editar_evento(ctx, nombre: str, nueva_fecha: str = None, *, nuevo_nombre: str = None):
     """Edita la fecha o nombre de un evento."""
@@ -201,19 +189,6 @@ async def editar_evento(ctx, nombre: str, nueva_fecha: str = None, *, nuevo_nomb
         await ctx.send(f"✅ Evento '{nombre}' modificado.")
     else:
         await ctx.send(f"❌ Evento '{nombre}' no encontrado.")
-
-
-@bot.command()
-async def proximos(ctx, cantidad: int = 5):
-    """Muestra los próximos N eventos."""
-    eventos = obtener_proximos_eventos(cantidad, str(ctx.guild.id))
-    if not eventos:
-        await ctx.send("📭 No hay eventos próximos.")
-        return
-    respuesta = "**📅 Próximos eventos:**\n"
-    for e in eventos:
-        respuesta += f"- {e['nombre']} → {e['fecha']}\n"
-    await ctx.send(respuesta)
 
 @bot.command(name="ayuda")
 async def ayuda(ctx):
@@ -243,11 +218,11 @@ async def debug(ctx):
     await ctx.send(info)
 
 # --- Tarea automática de recordatorios ---
-@tasks.loop(minutes=10.0)
+@tasks.loop(minutes=5.0)
 async def enviar_recordatorios():
     """Envía recordatorios de eventos programados."""
     try:
-        eventos = cargar_eventos(json_url=JSON_URL, local_path="data/eventos.json")
+        eventos = cargar_eventos(json_url=JSON_URL, local_path=LOCAL_PATH)
         hoy = datetime.now().date()
         
         for evento in eventos:
@@ -265,6 +240,7 @@ async def enviar_recordatorios():
                     if canal:
                         if "parcial" in evento["nombre"].lower() or "examen" in evento["nombre"].lower() or "recuperatorio" in evento["nombre"].lower():
                             mensaje = mensaje_examen(evento["fecha"])
+                            logger.info(f"mensaje listo: {mensaje}")
                         else:
                             mensaje = mensaje_tp(evento["fecha"])
                         await canal.send(mensaje)
