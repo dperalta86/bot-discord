@@ -5,8 +5,6 @@ from threading import Thread
 import json
 from datetime import datetime
 import os
-import logging
-import logging.handlers
 from dotenv import load_dotenv
 from mensajes import mensaje_tp, mensaje_examen  # Importar las funciones
 from utils import cargar_eventos, formatear_fecha
@@ -44,31 +42,10 @@ bot = commands.Bot(
     help_command=None,  # Desactiva el comando de ayuda por defecto
 )
 
-# logs - Utilizo configuracion propuesta pot discord
-
-# for this example, we're going to set up a rotating file logger.
-# for more info on setting up logging,
-# see https://discordpy.readthedocs.io/en/latest/logging.html and https://docs.python.org/3/howto/logging.html
-
-logger = logging.getLogger('discord')
-logger.setLevel(logging.INFO)
-
-handler = logging.handlers.RotatingFileHandler(
-    filename='discord.log',
-    encoding='utf-8',
-    maxBytes=32 * 1024 * 1024,  # 32 MiB
-    backupCount=5,  # Rotate through 5 files
-)
-dt_fmt = '%Y-%m-%d %H:%M:%S'
-formatter = logging.Formatter('[{asctime}] [{levelname:<8}] {name}: {message}', dt_fmt, style='{')
-handler.setFormatter(formatter)
-logger.addHandler(handler)
-
-
 # --- Eventos del Bot ---
 @bot.event
 async def on_ready():
-    logger.info(f"✅ Bot conectado como {bot.user.name}")
+    print(f"✅ Bot conectado como {bot.user.name}")
     enviar_recordatorios.start()
 
 @bot.event
@@ -229,7 +206,7 @@ async def enviar_recordatorios():
             try:
                 # Verifica si el evento tiene los campos necesarios
                 if not all(key in evento for key in ['fecha', 'avisos', 'canal_id', 'nombre']):
-                    logger.warning(f"⚠️ Evento incompleto: {evento}")
+                    print(f"⚠️ Evento incompleto: {evento}")
                     continue
                 
                 fecha_evento = formatear_fecha(evento["fecha"])
@@ -240,12 +217,12 @@ async def enviar_recordatorios():
                     if canal:
                         if "parcial" in evento["nombre"].lower() or "examen" in evento["nombre"].lower() or "recuperatorio" in evento["nombre"].lower():
                             mensaje = mensaje_examen(evento["fecha"])
-                            logger.info(f"mensaje listo: {mensaje}")
+                            print(f"mensaje listo: {mensaje}")
                         else:
                             mensaje = mensaje_tp(evento["fecha"])
                         await canal.send(mensaje)
             except Exception as e:
-                logger.warning(f"Error al procesar evento {evento}: {e}")
+                print(f"Error al procesar evento {evento}: {e}")
     except Exception as e:
         print(f"Error crítico en enviar_recordatorios: {e}")
 
