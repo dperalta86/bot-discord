@@ -1,92 +1,102 @@
-## 📢 Discord Reminder Bot (PdeP Edition)
+# 📢 Discord Reminder Bot (PdeP Edition)
 
 Bot de recordatorios automatizados para materias universitarias, comenzando con Paradigmas de Programación (PdeP).
 
 ---
 
-### 📌 Descripción
+## 📌 Descripción
 
-Bot de Discord diseñado para automatizar avisos de fechas importantes (parciales, entregas de TP, reuniones) mediante:
+Bot de Discord diseñado para automatizar avisos de fechas importantes como parciales, entregas de TPs y reuniones. Cuenta con:
 
-    ✅ Recordatorios programados con mensajes dinámicos y aleatorios.
+- ✅ Recordatorios programados con mensajes dinámicos y aleatorios.
+- ✅ Soporte multi-servidor (varias cátedras/comisiones).
+- ✅ Configuración remota vía JSON (accesible para no técnicos).
+- ✅ Mención a @everyone o roles personalizados.
 
-    ✅ Soporte multi-servidor (varias cátedras/comisiones).
+🧩 **Extensible a otras materias** con mínima configuración.
 
-    ✅ Configuración remota vía JSON (accesible para no técnicos).
+---
 
-    ✅ Mención a @everyone o roles personalizados.
+## ⚙️ Tecnologías
 
-Roadmap: Extensible a otras materias con mínima configuración.
-### ⚙️ Tecnologías
+- **Lenguaje:** Python 3.10+
+- **Librerías principales:**
+  - `discord.py` – API de Discord.
+  - `python-dotenv` – Gestión de variables de entorno.
+  - `requests` – Carga remota de archivos JSON.
+- **Hosting compatible:** Replit, Render, VPS o cualquier servicio con soporte Python.
 
-    Lenguaje: Python 3.10+
+---
 
-    Librerías:
+## 🚀 Configuración Inicial
 
-        discord.py (API de Discord).
+### 1. Requisitos
 
-        python-dotenv (gestión de tokens).
+- Token de bot de Discord ([Guía oficial](https://discordpy.readthedocs.io/en/stable/discord.html))
+- Python 3.10+ y pip
+- (Opcional) Repositorio GitHub para el archivo `eventos.json`
 
-        requests (carga remota de JSON).
+### 2. Instalación
 
-    Hosting: Compatible con Replit, Render, VPS.
+Clonar el repositorio:
 
-### 🚀 Configuración Inicial
-#### 1. Requisitos
-
-- Token de bot de Discord ([Guía](https://discordpy.readthedocs.io/en/stable/discord.html)).
-- Python 3.10+ y pip.
-- Repositorio GitHub para el JSON de eventos (opcional).
-
-#### 2. Instalación
-
-    Clonar repositorio
-    git clone https://github.com/dperalta86/bot-discord.git
-    cd bot-discord
+```bash
+git clone https://github.com/dperalta86/bot-discord.git
+cd bot-discord
+```
 
 Entorno virtual (recomendado)
 
-    python3 -m venv venv
-    source venv/bin/activate  # Linux/Mac
-    venv\Scripts\activate     # Windows
+```bash
+python3 -m venv venv
+source venv/bin/activate  # Linux/Mac
+venv\Scripts\activate     # Windows
+```
 
 Instalar dependencias
 
-    pip install -r requirements.txt
+```bash
+pip install -r requirements.txt
+```
 
-#### 3. Variables de Entorno
+### 3. Variables de Entorno
 
-Crear .env en la raíz:
+Crear .env en la raíz del proyecto y completa los siguientes datos:
 
-    DISCORD_TOKEN=tu_token_aquí
-    JSON_URL=https://raw.githubusercontent.com/tu_usuario/pdepbot-data/main/eventos.json
+```
+DISCORD_TOKEN=tu_token_aquí
+JSON_URL=https://raw.githubusercontent.com/tu_usuario/pdepbot-data/main/eventos.json
+```
+
+## 🛠️ ¿Cómo sigue esto?
+
+### 📅 Flujo de Trabajo
+
+- Editar eventos:
+
+    Modificar el archivo eventos.json en GitHub o localmente.
+
+- Sincronizar:
+
+    El bot actualiza los eventos automáticamente cada 24h.
+
+- Notificaciones:
+
+    Envía mensajes en los canales configurados con @everyone o roles.
 
 
-### 🛠️ ¿Cómo sigue esto?
 
-📅 Flujo de Trabajo
+### 🔮 Roadmap
 
-    Editar eventos:
+- 🧪 Fase 1: Uso interno en PdeP (2024).
 
-        Modificar el archivo eventos.json en GitHub o localmente.
+- ⚙️ Fase 2: Extender a otras cátedras (configuración modular).
 
-    Sincronizar:
+- 🌐 Fase 3: Panel web para gestión visual de eventos.
 
-        El bot actualiza los eventos automáticamente cada 24h (o con !actualizar).
 
-    Notificaciones:
 
-        Envía mensajes en los canales configurados con @everyone o roles.
-
-🔮 Roadmap
-
-    Fase 1: Uso interno en PdeP (2024).
-
-    Fase 2: Extender a otras cátedras (configuración modular).
-
-    Fase 3: Panel web para gestión visual de eventos.
-
-📜 Licencia
+## 📜 Licencia
 
 MIT License. Libre para uso y modificación.
 
@@ -95,7 +105,7 @@ MIT License. Libre para uso y modificación.
 Personalización: Los mensajes se ajustan al tono informal/geek (ver mensajes.py).
 Escalabilidad: Diseñado para integrarse con APIs externas (Google Calendar, Notion).
 
-#### 🔧 ¿Problemas?
+### 🔧 ¿Problemas?
 
 - Verifica que las dependencias estén instaladas
 - Verifica los permisos del bot en Discord.
@@ -103,7 +113,14 @@ Escalabilidad: Diseñado para integrarse con APIs externas (Google Calendar, Not
 
 ----
 
-✨ _"Porque recordar fechas debería ser tan fácil como copiar código de Stack Overflow."_
+## 🤝 Cómo Contribuir
+¿Querés aportar?
+- Hacé un fork del proyecto.
+- Creá una nueva rama con tu mejora: git checkout -b feature/nombre-feature.
+- Commiteá y hacé push.
+- Enviá un pull request. Todas las propuestas serán revisadas.
+
+El repositorio tiene ramas protegidas para garantizar estabilidad en producción.
 
 ### 📬 Contacto
 
@@ -118,11 +135,11 @@ Escalabilidad: Diseñado para integrarse con APIs externas (Google Calendar, Not
 
 ¿Por qué contactarme?
 
-    🤖 Ideas para mejorar proyectos.
+🤖 Ideas para mejorar proyectos.
 
-    🐞 Reportar errores o solicitar features.
+🐞 Reportar errores o solicitar features.
 
-    ☕ Tomar un café virtual (¡siempre disponible!).
-
+☕ Tomar un café virtual (¡siempre disponible!).
 
 **¿Preguntas o contribuciones sobre este proyecto? Abrí un issue o contactame a @dperalta86 en Discord.**
+✨ _"Porque recordar fechas debería ser tan fácil como copiar código de Stack Overflow."_
