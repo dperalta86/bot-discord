@@ -20,35 +20,34 @@ def cargar_eventos(json_url: str = None, local_path: str = "data/eventos.json") 
     """
     eventos = []
     
-    # 1. Intento cargar desde la URL remota (GitHub)
+    # Intento carga remota
     if json_url:
         try:
-            response = requests.get(json_url, timeout=10)
-            response.raise_for_status()  # Lanza error si HTTP != 200
+            response = requests.get(
+                json_url,
+                timeout=10,
+                headers={"Cache-Control": "no-cache"}  # Evita caché obsoleto
+            )
+            response.raise_for_status()
             eventos = response.json()
-            
             # Guardar backup local
-            Path(local_path).parent.mkdir(exist_ok=True)  # Crea directorio si no existe
+            Path(local_path).parent.mkdir(exist_ok=True)
             with open(local_path, "w") as f:
                 json.dump(eventos, f, indent=4)
-                
-            print("✅ Eventos cargados desde el JSON remoto.")
-            
+            print(f"✅ Cargados {len(eventos)} eventos desde GitHub")
             return eventos
-
         except Exception as e:
-            print(f"⚠️ Error al cargar JSON remoto: {e}. Usando backup local...")
+            print(f"⚠️ Error al cargar JSON remoto: {type(e).__name__} - {str(e)}")
     
-    # 2. Fallback a archivo local
+    # Fallback local
     try:
         with open(local_path) as f:
             eventos = json.load(f)
-        print("✅ Eventos cargados desde backup local.")
+        print(f"✅ Cargados {len(eventos)} eventos desde backup local")
         return eventos
-    except FileNotFoundError:
-        raise FileNotFoundError(
-            f"No se pudo cargar el JSON: Archivo local '{local_path}' no encontrado y URL remota falló."
-        )
+    except Exception as e:
+        print(f"❌ Error crítico: No se pudo cargar ningún JSON. {type(e).__name__} - {str(e)}")
+        return []  # Retorna lista vacía para evitar crashes
 
 def formatear_fecha(fecha_str):
     """Convierte 'YYYY-MM-DD' a un objeto datetime.date."""

@@ -1,4 +1,5 @@
 import asyncio
+from datetime import time
 import discord
 from discord.ext import commands
 from flask import Flask
@@ -71,11 +72,21 @@ async def on_guild_join(guild):
         await canal.send(mensaje)
 
 async def main():
-    # --- Cargar Cogs ---
-    await bot.load_extension("eventos")
-
-    # Iniciar el bot
-    await bot.start(TOKEN)
+    max_intentos = 3
+    for intento in range(max_intentos):
+        try:
+            await bot.load_extension("eventos")
+            await bot.start(TOKEN)
+            break
+        except discord.HTTPException as e:
+            if e.status == 429:
+                wait_time = 5 * (intento + 1)  # Espera progresiva
+                print(f"⚠️ Rate limit alcanzado. Reintentando en {wait_time}s...")
+                time.sleep(wait_time)
+            else:
+                raise
+    else:
+        print("❌ No se pudo conectar después de varios intentos")
 
 # Ejecutar el bot
 asyncio.run(main())
