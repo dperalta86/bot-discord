@@ -1,0 +1,4 @@
+{
+  "info": "📘 **Paradigmas de Programación - Info**\n\n👨‍🏫 Cátedra: Prof. Alfedro Sanzo\n📅 Clases: Martes, 19 a 22 hs.\n🌐 Pagina del curso: https://www.pdep.com.ar/cursos/martes-noche\n📄 Seguimiento de las clases: https://github.com/pdepman/bitacoras\n\n",
+  "ayuda": "🤖 **Comandos de PdepBot**:\n- `!info` → info general de la materia\n- `!agregar_evento \"Nombre\" YYYY-MM-DD dias` → Agrega un evento (ej: `!agregar_evento \"Parcial\" 2024-07-20 3,1`).\n- `!eventos` → lista todos los eventos cargados\n- `!ayuda` → muestra este mensaje\n\n*\"Más confiable que un `try-catch` vacío.\"* 🛠️"
+}

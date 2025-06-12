@@ -3,11 +3,14 @@ import json
 from discord.ext import commands, tasks
 from datetime import date, datetime, timedelta
 import os
-from mensajes import mensaje_tp, mensaje_examen  # Importar las funciones
+from mensajes import mensaje_clase, mensaje_motivacional, mensaje_tp, mensaje_examen  # Importar las funciones
 from utils import cargar_eventos, formatear_fecha
 
 JSON_URL = os.getenv("JSON_URL") # URL del JSON remoto
 LOCAL_PATH="data/eventos.json"
+
+with open("data/mensajes_definidos.json", "r", encoding="utf-8") as f:
+    MENSAJES_PREDEFINIDOS = json.load(f)
 
 class Eventos(commands.Cog):
     def __init__(self, bot):
@@ -34,6 +37,15 @@ class Eventos(commands.Cog):
             return False
         return True
     
+    @commands.command()
+    async def info(self, ctx):
+        await ctx.send(MENSAJES_PREDEFINIDOS["info"])
+
+    @commands.command(name="ayuda")
+    async def ayuda(self, ctx):
+        """Muestra la ayuda del bot."""
+        await ctx.send(MENSAJES_PREDEFINIDOS["ayuda"])
+
     @commands.command(name="agregar_evento")
     async def agregar_evento(self, ctx, nombre: str, fecha: str, avisos: str):
         # Si es un DM, envía mensaje humorístico y bloquea
@@ -88,19 +100,6 @@ class Eventos(commands.Cog):
         except Exception as e:
             await ctx.send(f"❌ Error al cargar eventos: {str(e)}")
 
-    @commands.command(name="ayuda")
-    async def ayuda(self, ctx):
-        """Muestra la ayuda del bot."""
-        ayuda_msg = """
-    🤖 **Comandos de PdepBot**:
-    - `!agregar_evento "Nombre" YYYY-MM-DD dias` → Agrega un evento (ej: `!agregar_evento "Parcial" 2024-07-20 3,1`).
-    - `!eventos` → Lista todos los eventos.
-    - `!ayuda` → Muestra este mensaje.
-
-    *"Más confiable que un `try-catch` vacío."* 🛠️
-        """
-        await ctx.send(ayuda_msg)
-
     # Eliminar en producción...
     @commands.command()
     async def debug(self, ctx):
@@ -115,7 +114,7 @@ class Eventos(commands.Cog):
         await ctx.send(info)
 
     # --- Tarea automática de recordatorios ---
-    @tasks.loop(minutes=5.0)
+    @tasks.loop(hours=24.0)
     async def enviar_recordatorios(self):
         """Envía recordatorios de eventos programados."""
         try:
@@ -123,12 +122,7 @@ class Eventos(commands.Cog):
             hoy = datetime.now().date()
             
             for evento in eventos:
-                try:
-                    # Verifica si el evento tiene los campos necesarios
-                    if not all(key in evento for key in ['fecha', 'avisos', 'canal_id', 'nombre']):
-                        print(f"⚠️ Evento incompleto: {evento}")
-                        continue
-                    
+                try:                  
                     fecha_evento = formatear_fecha(evento["fecha"])
                     dias_restantes = (fecha_evento - hoy).days
                     
@@ -136,11 +130,42 @@ class Eventos(commands.Cog):
                         canal = self.bot.get_channel(int(evento["canal_id"]))
 
                         if canal:
-                            if "parcial" in evento["nombre"].lower() or "examen" in evento["nombre"].lower() or "recuperatorio" in evento["nombre"].lower():
-                                mensaje = mensaje_examen(evento["fecha"])
-                                print(f"mensaje listo: {mensaje}")
+                            fecha = evento["fecha"]
+                            tipo = evento.get("tipo", "").lower()
+
+                            if not tipo:
+                                nombre = evento["nombre"].lower()
+                                if any(t in nombre for t in ["parcial", "examen", "recuperatorio", "final"]):
+                                    tipo = "examen"
+                                else:
+                                    tipo = "tp"
+
+                            if tipo == "examen":
+                                mensaje_base = mensaje_examen(evento["fecha"])
+                            elif tipo == "tp":
+                                mensaje_base = mensaje_tp(evento["fecha"])
+                            elif tipo == "clase":
+                                mensaje_base = mensaje_clase(evento["fecha"])
+                            elif tipo == "motivacional":
+                                mensaje_base = mensaje_motivacional(evento["fecha"])
                             else:
-                                mensaje = mensaje_tp(evento["fecha"])
+                                mensaje_base = f"📌 **Recordatorio:**\nEvento programado para el {fecha}"
+
+                            # Agregar anexo de proximidad (hoy, mañana)
+                            if dias_restantes == 0:
+                                anexo = " (¡hoy!)"
+                            elif dias_restantes == 1:
+                                anexo = " (mañana!)"
+                            else:
+                                anexo = ""
+
+                            mensaje = mensaje_base.format(fecha=f"{fecha}{anexo}")
+
+                            # Agregar mensaje adicional si está definido
+                            adicional = evento.get("mensaje_adicional", "")
+                            if adicional:
+                                mensaje += f"\n\n🗒️ {adicional}"
+
                             await canal.send(mensaje)
                 except Exception as e:
                     print(f"Error al procesar evento {evento}: {e}")

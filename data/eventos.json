@@ -1,5 +1,67 @@
 [
     {
-        "nombre": "Parcial"
+        "nombre": "Test Examen",
+        "fecha": "2025-06-12",
+        "avisos": [
+            1,
+            0
+        ],
+        "servidor_id": "1380998074079641751",
+        "canal_id": "1380998075539263623",
+        "tipo": "examen",
+        "mensaje_adicional": "\nEste es un test de evento(examen). Temas varios a estudiar!\n- tema 1\n- tema 2\n- tema 3"
+    },
+    {
+        "nombre": "Test Trabajo Pr\u00e1ctico",
+        "fecha": "2025-06-13",
+        "avisos": [
+            1,
+            0
+        ],
+        "servidor_id": "1380998074079641751",
+        "canal_id": "1380998075539263623",
+        "mensaje_adicional": "\nMensaje adicional para Test de Trabajo Practico!"
+    },
+    {
+        "nombre": "Test Examen",
+        "fecha": "2025-06-12",
+        "avisos": [
+            1,
+            0
+        ],
+        "servidor_id": "1380998074079641751",
+        "canal_id": "1380998075539263620",
+        "mensaje_adicional": "\nEste es un test de evento(examen). Temas varios a estudiar!\n- tema 1\n- tema 2\n- tema 3"
+    },
+    {
+        "nombre": "Test Trabajo Pr\u00e1ctico",
+        "fecha": "2025-06-13",
+        "avisos": [
+            1,
+            0
+        ],
+        "servidor_id": "1380998074079641751",
+        "canal_id": "1380998075539263620",
+        "mensaje_adicional": "\nMensaje adicional para Test de Trabajo Practico!"
+    },
+    {
+        "nombre": "Entrega TP3 - Individual",
+        "fecha": "2025-06-14",
+        "avisos": [
+            3,
+            1
+        ],
+        "servidor_id": "1380998074079641751",
+        "canal_id": "1380998075539263623"
+    },
+    {
+        "nombre": "1er Recuperatorio Funcional",
+        "fecha": "2025-06-17",
+        "avisos": [
+            3,
+            1
+        ],
+        "servidor_id": "1380998074079641751",
+        "canal_id": "1380998075539263623"
     }
 ]

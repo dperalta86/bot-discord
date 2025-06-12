@@ -24,7 +24,7 @@ def ping():
     return "pong", 200
 
 def run_flask():
-    app.run(host='0.0.0.0', port=8080)
+    app.run(host='0.0.0.0', port=8008)
 
 # Inicia Flask en segundo plano
 Thread(target=run_flask).start()
