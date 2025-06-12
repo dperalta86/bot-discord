@@ -10,6 +10,7 @@ from dotenv import load_dotenv
 load_dotenv()  # Carga variables de entorno desde .env
 TOKEN = os.getenv("DISCORD_TOKEN")
 
+
 # Configura Flask - Servidor para abrir puerto y evitar errores en Render
 app = Flask(__name__)
 

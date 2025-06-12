@@ -1,10 +1,30 @@
 [
   {
-    "nombre": "Parcial de Haskell",
-    "fecha": "2024-07-20",
+    "nombre": "Test Examen",
+    "fecha": "2024-06-10",
+    "avisos": [1, 0],
+    "servidor_id": "1380998074079641751",
+    "canal_id": "1380998075539263623"
+  },
+  {
+    "nombre": "Test Trabajo Práctico",
+    "fecha": "2024-06-11",
+    "avisos": [1, 0],
+    "servidor_id": "1380998074079641751",
+    "canal_id": "1380998075539263623"
+  },
+  {
+    "nombre": "Entrega TP3 - Individual",
+    "fecha": "2024-06-12",
     "avisos": [3, 1],
-    "servidor_id": "123456789",
-    "canal_id": "987654321",
-    "role_a_avisar": "Estudiantes"
+    "servidor_id": "1380998074079641751",
+    "canal_id": "1380998075539263623"
+  },
+  {
+    "nombre": "1er Recuperatorio Funcional",
+    "fecha": "2024-06-17",
+    "avisos": [3, 1],
+    "servidor_id": "1380998074079641751",
+    "canal_id": "1380998075539263623"
   }
 ]
